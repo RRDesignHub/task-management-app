@@ -3,6 +3,7 @@ import ErrorPage from "../Pages/ErrorPage";
 import Login from "../Pages/Authentication/Login";
 import MainLayout from "../Layout/MainLayout";
 import { Home } from "../Pages/Home";
+import Registration from "../Pages/Authentication/Register";
 
 const router = createBrowserRouter([
   {
@@ -21,10 +22,10 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login></Login>,
   },
-  // {
-  //   path: "/registration",
-  //   element: <Register></Register>,
-  // },
+  {
+    path: "/registration",
+    element: <Registration />,
+  },
   // {
   //   path: "/reset-password",
   //   element: <ResetPassword></ResetPassword>,

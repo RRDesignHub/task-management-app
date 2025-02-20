@@ -1,9 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
+import Swal from "sweetalert2";
+import useAuth from "../../Hooks/useAuth";
+import imageUpload from "../../Api/Utils";
 
 const Registration = () => {
-  
+  const {userSignUp, updateUserProfile} = useAuth()
   const navigate = useNavigate();
   const location = useLocation();
   const [password, setPassword] = useState("");
@@ -32,48 +35,48 @@ const Registration = () => {
     }
   };
 
-  // const handleSignUp = async (e) => {
-  //   e.preventDefault();
-  //   const form = e.target;
-  //   const email = form.email.value;
-  //   const name = form.name.value;
-  //   const imageFile = form.imageFile.files[0];
-  //   const validPassword = password;
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const email = form.email.value;
+    const name = form.name.value;
+    const imageFile = form.imageFile.files[0];
+    const validPassword = password;
 
-  //   if (!validPassword || validationMessage) {
-  //     return;
-  //   }
+    if (!validPassword || validationMessage) {
+      return;
+    }
 
-  //   // image file upload to imageBB:
-  //   const photoURL = await imageUpload(imageFile);
+    // image file upload to imageBB:
+    const photoURL = await imageUpload(imageFile);
 
-  //   try {
-  //     const result = await userSignUp(email, validPassword);
-  //     // Update the user's profile:
-  //     await updateUserProfile(name, photoURL);
+    try {
+      const result = await userSignUp(email, validPassword);
+      // Update the user's profile:
+      await updateUserProfile(name, photoURL);
 
-  //     // Save user data to the database:
-  //     await axios.post(`${import.meta.env.VITE_SERVER_API}/users/${email}`, {
-  //       name: name,
-  //       image: photoURL,
-  //       email: email,
-  //     });
+      // Save user data to the database:
+      await axios.post(`${import.meta.env.VITE_SERVER_API}/users/${email}`, {
+        name: name,
+        image: photoURL,
+        email: email,
+      });
 
-  //     setUser(result.user);
-  //     // Success message and redirection:
-  //     Swal.fire({
-  //       position: "center",
-  //       icon: "success",
-  //       title: `${name} successfully created your account!`,
-  //       showConfirmButton: false,
-  //       timer: 1500,
-  //     });
-  //     form.reset();
-  //     navigate(from, { replace: true });
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
+      setUser(result.user);
+      // Success message and redirection:
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: `${name} successfully created your account!`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      form.reset();
+      navigate(from, { replace: true });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   // Google Signin
   const handleGoogleSignIn = async () => {
@@ -93,23 +96,16 @@ const Registration = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-306px)] my-12">
-      <div className="flex flex-col lg:flex-row w-full max-w-sm lg:max-w-4xl mx-auto overflow-hidden border-2 border-[rgba(61,64,91,0.6)] bg-white rounded-lg shadow-lg">
-        {/* Image Section for Larger Screens */}
-        <div className="hidden lg:flex w-1/2 bg-terracotta justify-center items-center">
-          <img
-            src="/register-illustration.png"
-            alt="Register Illustration"
-            className="w-3/4 h-auto"
-          />
-        </div>
+    <div className="bg-background  flex justify-center items-center min-h-screen py-10">
+      <div className="flex flex-col justify-center items-center w-full max-w-md mx-auto overflow-hidden border-2 border-textDark bg-white rounded-lg shadow-lg">
+        
 
         {/* Form Section */}
-        <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
+        <div className="w-full px-6 py-8 ">
           {/* Logo */}
-          <div className="flex justify-center mx-auto">
-            <img className="w-auto h-10 sm:h-8" src="" alt="TourHub Logo" />
-          </div>
+          <div className="flex justify-center mb-4">
+          <h1 className="text-textDark text-3xl font-bold">Task Manager App</h1>
+        </div>
 
           {/* Title */}
           <p className="mt-3 text-xl text-center text-chocolate font-heebo mb-4">
@@ -227,7 +223,7 @@ const Registration = () => {
             <div className="mt-6">
               <button
                 type="submit"
-                className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-terracotta rounded-lg hover:bg-chocolate focus:outline-none focus:ring focus:ring-chocolate focus:ring-opacity-50"
+                className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-primary rounded-lg hover:bg-primary focus:outline-none focus:ring focus:ring-chocolate focus:ring-opacity-50"
               >
                 Sign Up
               </button>
@@ -239,7 +235,7 @@ const Registration = () => {
             <span className="w-1/5 border-b lg:w-1/4"></span>
             <Link
               to="/login"
-              className="text-xs text-gray-500 uppercase hover:underline"
+              className="text-xs text-textDark uppercase hover:underline"
             >
               Or sign in
             </Link>

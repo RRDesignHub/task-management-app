@@ -31,29 +31,31 @@ const client = new MongoClient(uri, {
   }
 });
 
+// jwt token create:
+app.post('/jwt', async (req, res) => {
+  const email = req.body;
+  const token = jwt.sign(email, process.env.SECRET_KEY, { expiresIn: "1h" })
+  res.send({ token });
+})
+
+// verify user token middleware:
+const verifyToken = async (req, res, next) => {
+  if (!req.headers.auth) {
+    return res.status(401).send({ message: "Unauthorised Access!!!" });
+  }
+  const token = req.headers.auth.split(" ")[1];
+  jwt.verify(token, process.env.SECRET_KEY, (error, decoded) => {
+    if (error) { return res.status(401).send({ message: "Unauthorised Access!!!" }) };
+    req.decoded = decoded;
+  })
+  next();
+}
+
 async function run() {
   try {
-    const userCollection = client.db('tourHubDB').collection('users');
+    const userCollection = client.db('taskManager').collection('users');
 
-    // jwt token create:
-    app.post('/jwt', async (req, res) => {
-      const email = req.body;
-      const token = jwt.sign(email, process.env.SECRET_KEY, { expiresIn: "1h" })
-      res.send({ token });
-    })
-
-    // verify user token middleware:
-    const verifyToken = async (req, res, next) => {
-      if (!req.headers.auth) {
-        return res.status(401).send({ message: "Unauthorised Access!!!" });
-      }
-      const token = req.headers.auth.split(" ")[1];
-      jwt.verify(token, process.env.SECRET_KEY, (error, decoded) => {
-        if (error) { return res.status(401).send({ message: "Unauthorised Access!!!" }) };
-        req.decoded = decoded;
-      })
-      next();
-    }
+    
 
 
     app.post('/users/:email', async (req, res) => {
@@ -73,10 +75,9 @@ async function run() {
 
 
 
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);

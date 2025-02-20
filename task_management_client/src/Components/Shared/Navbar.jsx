@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import useAuth from "../../Hooks/useAuth";
 
 const Navbar = () => {
-  const { user, logout } = useAuth(); // User authentication state
+  const { user, logOut } = useAuth(); // User authentication state
   const links = (
     <>
       <li>
@@ -50,18 +50,12 @@ const Navbar = () => {
         </NavLink>
       </li>
         <li>
-        <NavLink
-          to="/logout"
-          className={({ isActive }) =>
-            `px-2 lg:px-4 py-2 rounded-lg transition duration-300 ${
-              isActive
-                ? "bg-[#f3fff9] text-textDark font-semibold border-b-4 border-primary active:bg-background focus:bg-blue-50 active:text-textDark focus:text-textDark" // Active state style with a border
-                : "text-textDark"
-            } hover:bg-blue-100 hover:text-textDark`
-          }
+        <button
+        onClick={() =>logOut()}
+          className="btn"
         >
           Logout
-        </NavLink>
+        </button>
       </li>
       </>}
 
