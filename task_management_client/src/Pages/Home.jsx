@@ -6,6 +6,7 @@ export const Home = () => {
   return (
     <>
       <div className="max-sm:w-11/12 max-w-3xl mx-auto bg-white max-h-[70vh] py-20 flex flex-col justify-center items-center text-center">
+        {user && <h2 className="text-2xl font-bold text-textDark">Hey, {user?.displayName}</h2>}
         <h1 className="text-3xl md:text-5xl font-bold text-primary">
           Welcome to Task Manager
         </h1>
