@@ -4,10 +4,10 @@ import Navbar from "../Components/Shared/Navbar";
 export default function MainLayout() {
   return (
     <>
-     <header className="bg-base-100 drop-shadow-lg">
+     <header className=" drop-shadow-lg ">
       <Navbar />
     </header>
-    <main className="bg-background py-6 min-h-screen">
+    <main className="bg-background min-h-[100vh] pt-28">
       <Outlet></Outlet>
     </main>
     </>

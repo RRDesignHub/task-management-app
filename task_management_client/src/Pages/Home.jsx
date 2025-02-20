@@ -5,8 +5,8 @@ export const Home = () => {
   const { user } = useAuth();
   return (
     <>
-      <div className="mx-auto max-w-3xl bg-white rounded-xl drop-shadow-lg flex flex-col items-center justify-center min-h-[80vh] text-center">
-        <h1 className="text-4xl font-bold text-primary">
+      <div className="max-sm:w-11/12 max-w-3xl mx-auto bg-white max-h-[70vh] py-20 flex flex-col justify-center items-center text-center">
+        <h1 className="text-3xl md:text-5xl font-bold text-primary">
           Welcome to Task Manager
         </h1>
         <p className="mt-4 text-lg text-gray-600">
