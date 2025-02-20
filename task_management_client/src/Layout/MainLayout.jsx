@@ -7,7 +7,7 @@ export default function MainLayout() {
      <header className="bg-base-100 drop-shadow-lg">
       <Navbar />
     </header>
-    <main className="bg-background py-6">
+    <main className="bg-background py-6 min-h-screen">
       <Outlet></Outlet>
     </main>
     </>

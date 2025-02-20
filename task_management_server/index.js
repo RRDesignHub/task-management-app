@@ -54,6 +54,7 @@ const verifyToken = async (req, res, next) => {
 async function run() {
   try {
     const userCollection = client.db('taskManager').collection('users');
+    const taskCollection = client.db('taskManager').collection('tasks');
 
     
 
@@ -70,6 +71,34 @@ async function run() {
       const result = await userCollection.insertOne({
         ...userData, role: "user", time: Date.now()
       });
+      res.send(result);
+    })
+
+    app.get('/user/:email', verifyToken, async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+
+      const result = await userCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.post("/tasks", async(req, res) =>{
+      const task = req.body;
+
+      const query = {title: task.title};
+      const alreadyExist = await taskCollection.findOne(query);
+      if(alreadyExist){
+        return res.send({message: "Task already added!!!"})
+      }
+
+      const result = await taskCollection.insertOne(task);
+      res.send(result);
+    })
+
+    app.get("/tasks/:email", async(req, res) =>{
+      const email = req.params.email;
+      const query = {email: email};
+      const result = await taskCollection.find(query).toArray();
       res.send(result);
     })
 

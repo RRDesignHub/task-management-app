@@ -52,14 +52,14 @@ const Navbar = () => {
         <li>
         <button
         onClick={() =>logOut()}
-          className="btn"
+          className="px-2 lg:px-4 py-2 rounded-lg transition duration-300 text-textDark"
         >
           Logout
         </button>
       </li>
       </>}
 
-      <li>
+      {!user && <li>
         <NavLink
           to="/login"
           className={({ isActive }) =>
@@ -72,11 +72,11 @@ const Navbar = () => {
         >
           Login
         </NavLink>
-      </li>
+      </li>}
     </>
   );
   return (
-    <div className="navbar w-11/12 mx-auto">
+    <div className="navbar w-11/12 mx-auto px-0">
       <div className="flex-1">
         <a className="text-xl font-semibold text-textDark">Task Manager</a>
       </div>
