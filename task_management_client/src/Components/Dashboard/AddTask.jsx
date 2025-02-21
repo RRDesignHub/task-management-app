@@ -5,7 +5,9 @@ import { format } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
 import Swal from "sweetalert2";
 import useUser from "../../Hooks/useUser";
+import { useAxiosSecure } from "../../Hooks/useAxiosSecure";
 export default function AddTask({ isOpen,  onClose, refetch }) {
+  const axiosSecure = useAxiosSecure();
   const [userData, userDataLoading] = useUser();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -21,8 +23,8 @@ export default function AddTask({ isOpen,  onClose, refetch }) {
     try {
       const newTask = { title, description, category, deadline, email: userData?.email, userName: userData.name };
 
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVER_API}/tasks`,
+      const { data } = await axiosSecure.post(
+        `/tasks`,
         newTask
       );
       if(data.message === "Task already added!!!"){
@@ -92,7 +94,7 @@ export default function AddTask({ isOpen,  onClose, refetch }) {
             onChange={(e) => setCategory(e.target.value)}
           >
             <option value="To-Do">To-Do</option>
-            <option value="In Progress">In Progress</option>
+            <option value="In-Progress">In Progress</option>
             <option value="Done">Done</option>
           </select>
           </div>

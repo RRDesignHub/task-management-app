@@ -82,7 +82,7 @@ async function run() {
       res.send(result);
     })
 
-    app.post("/tasks", async(req, res) =>{
+    app.post("/tasks", verifyToken, async(req, res) =>{
       const task = req.body;
 
       const query = {title: task.title};
@@ -91,7 +91,15 @@ async function run() {
         return res.send({message: "Task already added!!!"})
       }
 
-      const result = await taskCollection.insertOne(task);
+    // Find total tasks in the spacipic category
+    const taskCount = await taskCollection.countDocuments({ category: task.category });
+
+    // Set the position as the next available index (note: array start from 0)
+    const newPosition = taskCount;
+
+      const result = await taskCollection.insertOne({
+        ...task, position: newPosition, createdAt: Date.now()
+      });
       res.send(result);
     })
 
@@ -99,6 +107,35 @@ async function run() {
       const email = req.params.email;
       const query = {email: email};
       const result = await taskCollection.find(query).toArray();
+      res.send(result);
+    })
+
+    app.get("/task/:id", verifyToken,  async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id) };
+      const result = await taskCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.patch("/tasks/:id", verifyToken, async(req, res) =>{
+      const id = req.params.id;
+      const { category, position } = req.body;
+
+      const query = {_id: new ObjectId(id)};
+      const updateInfo = {
+        ...(category && { category }), 
+        ...(position !== undefined && { position }) 
+      }
+
+      const result = await taskCollection.updateOne(query, { $set: updateInfo });
+      res.send(result);
+    })
+
+
+    app.delete("/task/:id", verifyToken,  async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id) };
+      const result = await taskCollection.deleteOne(query);
       res.send(result);
     })
 

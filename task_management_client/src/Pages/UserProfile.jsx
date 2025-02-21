@@ -1,15 +1,20 @@
 import React from 'react'
 import useUser from '../Hooks/useUser'
+import Loading from '../Components/Shared/Loading'
 
 export default function UserProfile() {
   const [userData, userDataLoading] = useUser()
+  if(userDataLoading){
+    return <Loading />
+  }
   return (
     <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
       {/* Profile Image */}
       <div className="flex justify-center">
         <img 
-          src={userData.photoURL || "https://via.placeholder.com/150"} 
+          src={userData?.image} 
           alt="Profile" 
+          referrerPolicy='no-refferer'
           className="w-24 h-24 rounded-full border-4 border-primary shadow-md"
         />
       </div>
