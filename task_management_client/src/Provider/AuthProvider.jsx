@@ -88,7 +88,6 @@ const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser?.email) {
         setUser(currentUser);
-        console.log("User-->", currentUser)
         
       // get jwt token from server
         const {data} = await axios.post(`${import.meta.env.VITE_SERVER_API}/jwt`, {email: currentUser?.email})

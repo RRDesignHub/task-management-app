@@ -7,12 +7,14 @@ import Column from "../Components/Dashboard/Column";
 import {
   closestCorners,
   DndContext,
+  KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
 import { useEffect, useState } from "react";
-import { arrayMove } from "@dnd-kit/sortable";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 export default function Dashboard() {
   const [userData, userDataLoading] = useUser();
   const axiosSecure = useAxiosSecure();
@@ -50,11 +52,9 @@ export default function Dashboard() {
   }, [loadedTasks]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5, // Drag starts after 5px movement (improves mobile experience)
-      },
-    })
+    useSensor(PointerSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates})
   );
 
   // drag and drop functiom:

@@ -60,7 +60,7 @@ export default function TaskCard({ task, refetch }) {
       {...attributes}
       {...listeners}
       style={style}
-      className="p-4 bg-white shadow-md rounded-md my-2 active:opacity-90 active:border active:border-primary cursor-grab"
+      className="touch-none p-4 bg-white shadow-md rounded-md my-2 active:opacity-90 active:border active:border-primary cursor-grab"
     >
       {/* Task Title */}
       <h3 className="text-lg font-semibold text-textDark">{task?.title}</h3>
@@ -80,7 +80,7 @@ export default function TaskCard({ task, refetch }) {
       <div className="flex items-center justify-between">
         {/* Details Button */}
         <Link
-          to={`/task/${task._id}`}
+          to={`task/${task._id}`}
           className="mt-2 text-primary hover:underline text-sm font-medium flex items-center gap-2"
         >
           View Details <FaArrowRight />
