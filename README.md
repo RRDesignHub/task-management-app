@@ -74,7 +74,7 @@ A Task Management Application that allows users to manage tasks through a drag-a
 
 ## Live Link
 
-- [Task Management App](https://your-live-link.com)
+- [Task Management App](https://task-manage-hub.netlify.app)
 
 ## Installation
 
