@@ -91,14 +91,10 @@ async function run() {
         return res.send({message: "Task already added!!!"})
       }
 
-    // Find total tasks in the spacipic category
-    const taskCount = await taskCollection.countDocuments({ category: task.category });
-
-    // Set the position as the next available index (note: array start from 0)
-    const newPosition = taskCount;
+    
 
       const result = await taskCollection.insertOne({
-        ...task, position: newPosition, createdAt: Date.now()
+        ...task, createdAt: Date.now()
       });
       res.send(result);
     })
@@ -117,14 +113,24 @@ async function run() {
       res.send(result);
     })
 
+    //update whole task
+    app.put("/task/:id", verifyToken,  async(req, res) =>{
+      const updatedTask = req.body;
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id) };
+      const result = await taskCollection.updateOne(query, { $set: updatedTask });
+      res.send(result);
+    })
+
+
+    //update the status for drag drop
     app.patch("/tasks/:id", verifyToken, async(req, res) =>{
       const id = req.params.id;
-      const { category, position } = req.body;
+      const { status } = req.body;
 
       const query = {_id: new ObjectId(id)};
       const updateInfo = {
-        ...(category && { category }), 
-        ...(position !== undefined && { position }) 
+        status: status 
       }
 
       const result = await taskCollection.updateOne(query, { $set: updateInfo });

@@ -4,7 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useAxiosSecure } from "../Hooks/useAxiosSecure";
 import Loading from "../Components/Shared/Loading";
 import Column from "../Components/Dashboard/Column";
-import { closestCorners, DndContext } from "@dnd-kit/core";
+import {
+  closestCorners,
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { useEffect, useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 export default function Dashboard() {
@@ -38,30 +44,43 @@ export default function Dashboard() {
       return data;
     },
   });
-  useEffect(() =>{
-    setTasks(loadedTasks)
-  },[])
 
-  //task position
-  const taskPosition = id =>{
-    tasks.findIndex(task => task._id === id)
-  }
+  useEffect(() => {
+    setTasks(loadedTasks);
+  }, [loadedTasks]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5, // Drag starts after 5px movement (improves mobile experience)
+      },
+    })
+  );
 
   // drag and drop functiom:
   const handleDragEnd = async (event) => {
     const { active, over } = event;
-    if(active.id == over.id) return;
+    if (!over) return;
+    const taskId = active.id;
+    const newStatus = over.id;
 
-    setTasks(tasks =>{
-      const orgPosition = taskPosition(active.id);
-      const newPosition = taskPosition(over.id)
+    // 🔹 Find the dragged task
+    const draggedTask = tasks.find((task) => task._id === taskId);
+    if (!draggedTask || draggedTask.status === newStatus) return;
 
-      return arrayMove(tasks, orgPosition, newPosition)
-    })
-
-
+    // 🔹 Update state immediately for UI response
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task._id === taskId ? { ...task, status: newStatus } : task
+      )
+    );
+    try {
+      await axiosSecure.patch(`tasks/${taskId}`, { status: newStatus });
+      refetch(); // Reload tasks from DB
+    } catch (error) {
+      console.error("Error updating task status:", error);
+    }
   };
-
   if ((isLoading, userDataLoading)) {
     return <Loading />;
   }
@@ -81,17 +100,26 @@ export default function Dashboard() {
       {/* Task Columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <DndContext
+          sensors={sensors}
           collisionDetection={closestCorners}
           onDragEnd={handleDragEnd}
         >
-          {columns.map((column) => (
-            <Column
-              key={column.id}
-              refetch={refetch}
-              column={column}
-              tasks={tasks.filter((task) => task.category === column.id)}
-            />
-          ))}
+          {tasks.length === 0 ? (
+            <div className="min-h-[70vh] bg-card rounded-lg col-span-3 flex justify-center items-center">
+              <h2 className="text-center text-2xl font-bold text-primary">
+              Please add your tasks
+            </h2>
+            </div>
+          ) : (
+            columns?.map((column) => (
+              <Column
+                key={column.id}
+                column={column}
+                tasks={tasks.filter((task) => task.status == column.id)}
+                refetch={refetch}
+              />
+            ))
+          )}
         </DndContext>
       </div>
 
@@ -99,7 +127,6 @@ export default function Dashboard() {
       <AddTask
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        onTaskAdded={tasks}
         refetch={refetch}
       />
     </div>

@@ -5,14 +5,27 @@ import { useAxiosSecure } from "../../Hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useDraggable } from "@dnd-kit/core";
+import { format, isBefore, parseISO } from "date-fns";
 export default function TaskCard({ task, refetch }) {
   const axiosSecure = useAxiosSecure();
-  const {attributes, listeners, transform, transition, setNodeRef} = useSortable({id: task?._id});
 
-  const style = {
-    transition,
-    transform: CSS.Transform.toString(transform)
-  }
+   // if the deadline crossed:
+    let deadlineDate = {}
+    if(task.deadline){
+      deadlineDate = parseISO(task?.deadline);
+    }
+    const today = new Date();
+    const isExpired = isBefore(deadlineDate, today);
+
+  const { attributes, listeners, transform, setNodeRef } =
+    useDraggable({ id: task._id });
+
+  const style = transform
+    ? {
+        transform: `translate(${transform.x}px, ${transform.y}px)`,
+      }
+    : undefined;
   const handleRemoveTask = async (id) => {
     try {
       Swal.fire({
@@ -23,41 +36,45 @@ export default function TaskCard({ task, refetch }) {
         showCancelButton: true,
         confirmButtonColor: "#d33",
         cancelButtonColor: "#16A34A",
-        confirmButtonText: "Yes, delete it!"
-      }).then(async(result) => {
+        confirmButtonText: "Yes, delete it!",
+      }).then(async (result) => {
         if (result.isConfirmed) {
           const { data } = await axiosSecure.delete(`task/${id}`);
-      if (data.deletedCount) {
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your task has been deleted.",
-          icon: "success"
-        });
-        refetch();
-      }
-          
+          if (data.deletedCount) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your task has been deleted.",
+              icon: "success",
+            });
+            refetch();
+          }
         }
       });
-      
     } catch (err) {
       console.log("Delete Task Error--->", err);
     }
   };
   return (
     <div
-    ref={setNodeRef}
-    {...attributes}
-    {...listeners}
-    style={style}
-      className="p-4 bg-white shadow-md rounded-md my-2 active:opacity-80 active:border active:border-primary cursor-grab"
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={style}
+      className="p-4 bg-white shadow-md rounded-md my-2 active:opacity-90 active:border active:border-primary cursor-grab"
     >
       {/* Task Title */}
-      <h3 className="text-lg font-semibold text-textDark">{task.title}</h3>
+      <h3 className="text-lg font-semibold text-textDark">{task?.title}</h3>
 
       {/* Task Deadline  */}
       <p className="text-sm text-gray-600">
         <span className="font-medium">Deadline:</span>{" "}
-        {new Date(task.deadline).toLocaleDateString()}
+        <span
+            className={`text-sm ${
+              isExpired ? "text-red-400 font-bold" : "text-gray-600"
+            }`}
+          >
+            {format(task.deadline, "dd-MM-yyyy HH:mm")}
+          </span>
       </p>
 
       <div className="flex items-center justify-between">

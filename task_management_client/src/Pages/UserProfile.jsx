@@ -1,6 +1,7 @@
 import React from 'react'
 import useUser from '../Hooks/useUser'
 import Loading from '../Components/Shared/Loading'
+import { format } from 'date-fns'
 
 export default function UserProfile() {
   const [userData, userDataLoading] = useUser()
@@ -8,7 +9,7 @@ export default function UserProfile() {
     return <Loading />
   }
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-lg mx-auto mt-10 p-6 bg-card shadow-lg rounded-lg">
       {/* Profile Image */}
       <div className="flex justify-center">
         <img 
@@ -31,7 +32,7 @@ export default function UserProfile() {
       {/* Joined Date */}
       <div className="mt-4 text-center">
         <p className="text-gray-500">
-          <strong>Joined:</strong> {new Date(userData.time).toLocaleDateString()}
+          <strong>Joined:</strong> {format(userData.time, "yyyy-MM-dd HH:mm")}
         </p>
       </div>
     </div>
