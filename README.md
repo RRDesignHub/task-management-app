@@ -34,11 +34,6 @@ A Task Management Application that allows users to manage tasks through a drag-a
   - CORS (to handle cross-origin requests)
   - morgan (for HTTP request logging)
 
-## Live Link
-
-- [Task Management App](# Task Management Application
-
-A Task Management Application that allows users to manage tasks through a drag-and-drop interface. The app supports task creation, editing, deletion, and reordering while offering real-time synchronization with a MongoDB backend. It also features authentication with Firebase and is fully responsive for both desktop and mobile users.
 
 ## Key Features
 
